@@ -1,6 +1,5 @@
 ## Usage
 
+Edit an mp3 file. You'll see a buffer with its metadata stored as ID3 tags. Editing the buffer will update the tags. Note that this requires the `id3` command-line tool. On Arch Linux, this is available from the `id3` package, installable with:
 
-## Contributing
-
-Pull requests are welcome, but take a look at [CONTRIBUTING.md](https://github.com/AndrewRadev/id3.vim/blob/master/CONTRIBUTING.md) first for some guidelines.
+    pacman -S id3
