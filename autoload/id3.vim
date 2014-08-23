@@ -3,6 +3,11 @@ function! id3#ReadMp3(filename)
   let format_string  = '%'.join(['t', 'a', 'l', 'n', 'y', 'g', 'c'], '\n%')
   let command_output = system("id3 -q '".format_string."' ".filename)
 
+  if v:shell_error
+    echoerr "There was an error executing the `id3` command: ".command_output
+    return
+  endif
+
   let tags = split(command_output, "\n")
   let tags = map(tags, 'v:val != "<empty>" ? v:val : ""')
   call append(0, [
