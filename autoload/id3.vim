@@ -29,6 +29,8 @@ function! id3#ReadMp3(filename)
 endfunction
 
 function! id3#UpdateMp3(filename)
+  let new_filename = s:FindTagValue('File')
+
   let tags   = {}
   let tags.t = s:FindTagValue('Title')
   let tags.a = s:FindTagValue('Artist')
@@ -52,6 +54,14 @@ function! id3#UpdateMp3(filename)
   endif
 
   set nomodified
+
+  if new_filename != a:filename
+    call rename(a:filename, new_filename)
+    exe 'file '.fnameescape(new_filename)
+    %delete _
+    call id3#ReadMp3(new_filename)
+    set nomodified
+  endif
 endfunction
 
 function! s:FindTagValue(tag_name)
