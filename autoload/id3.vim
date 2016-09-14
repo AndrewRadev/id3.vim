@@ -1,4 +1,9 @@
 function! id3#ReadMp3(filename)
+  if !filereadable(a:filename)
+    echoerr "File does not exist, can't open MP3 metadata: ".a:filename
+    return
+  endif
+
   let filename       = shellescape(a:filename)
   let format_string  = '%'.join(['t', 'a', 'l', 'n', 'y', 'g', 'c'], '\n%')
   let command_output = system("id3 -q '".format_string."' ".filename)
@@ -25,7 +30,54 @@ function! id3#ReadMp3(filename)
   $delete _
   call cursor(1, 1)
 
-  set filetype=mp3
+  set filetype=audio.mp3
+endfunction
+
+function! id3#ReadFlac(filename)
+  if !filereadable(a:filename)
+    echoerr "File does not exist, can't open FLAC metadata: ".a:filename
+    return
+  endif
+
+  let filename       = shellescape(a:filename)
+  let tag_names      = ['TITLE', 'ARTIST', 'ALBUM', 'TRACKNUMBER', 'DATE', 'GENRE', 'DESCRIPTION']
+  let tag_string     = join(map(copy(tag_names), '"--show-tag=".v:val'), ' ')
+  let command_output = systemlist('metaflac '.tag_string.' '.filename)
+
+  if v:shell_error
+    echoerr "There was an error executing the `metaflac` command: ".string(command_output)
+    return
+  endif
+
+  let tags = {}
+  for line in command_output
+    let [tag_name, value] = split(line, '^[A-Z]\+\zs=')
+    let tags[tag_name] = value
+  endfor
+
+  " fill in missing values
+  for tag_name in tag_names
+    if !has_key(tags, tag_name)
+      let tags[tag_name] = ''
+    endif
+  endfor
+
+  call append(0, [
+        \   'File: '.a:filename,
+        \   repeat('=', len('File: '.a:filename)),
+        \   '',
+        \   'Title:       '.tags.TITLE,
+        \   'Artist:      '.tags.ARTIST,
+        \   'Album:       '.tags.ALBUM,
+        \   'Track No:    '.tags.TRACKNUMBER,
+        \   'Date:        '.tags.DATE,
+        \   'Genre:       '.tags.GENRE,
+        \   'Description: '.tags.DESCRIPTION,
+        \ ])
+  $delete _
+  call cursor(1, 1)
+
+  set filetype=audio.flac
 endfunction
 
 function! id3#UpdateMp3(filename)
@@ -50,18 +102,54 @@ function! id3#UpdateMp3(filename)
 
   let output = system(command_line)
   if v:shell_error
-    echoerr output
+    echoerr "There was an error executing the `id3` command: ".output
+    return
   endif
-
-  set nomodified
 
   if new_filename != a:filename
     call rename(a:filename, new_filename)
     exe 'file '.fnameescape(new_filename)
     %delete _
     call id3#ReadMp3(new_filename)
-    set nomodified
   endif
+
+  set nomodified
+endfunction
+
+function! id3#UpdateFlac(filename)
+  let new_filename = s:FindTagValue('File')
+
+  let tags             = {}
+  let tags.TITLE       = s:FindTagValue('Title')
+  let tags.ARTIST      = s:FindTagValue('Artist')
+  let tags.ALBUM       = s:FindTagValue('Album')
+  let tags.TRACKNUMBER = s:FindTagValue('Track No')
+  let tags.DATE        = s:FindTagValue('Date')
+  let tags.GENRE       = s:FindTagValue('Genre')
+  let tags.DESCRIPTION = s:FindTagValue('Description')
+
+  let command_line = 'metaflac '
+  for [key, value] in items(tags)
+    if value != ''
+      let command_line .= '--set-tag='.key.'='.shellescape(value).' '
+    endif
+  endfor
+  let command_line .= shellescape(a:filename)
+
+  let output = system(command_line)
+  if v:shell_error
+    echoerr "There was an error executing the `flac` command: ".output
+    return
+  endif
+
+  if new_filename != a:filename
+    call rename(a:filename, new_filename)
+    exe 'file '.fnameescape(new_filename)
+    %delete _
+    call id3#ReadFlac(new_filename)
+  endif
+
+  set nomodified
 endfunction
 
 function! s:FindTagValue(tag_name)
