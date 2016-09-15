@@ -51,14 +51,14 @@ function! id3#ReadFlac(filename)
 
   let tags = {}
   for line in command_output
-    let [tag_name, value] = split(line, '^[A-Z]\+\zs=')
-    let tags[tag_name] = value
+    let [tag_name, value] = split(line, '^\w\+\zs=')
+    let tags[s:Upcase(tag_name)] = value
   endfor
 
   " fill in missing values
   for tag_name in tag_names
     if !has_key(tags, tag_name)
-      let tags[tag_name] = ''
+      let tags[s:Upcase(tag_name)] = ''
     endif
   endfor
 
@@ -161,4 +161,8 @@ function! s:FindTagValue(tag_name)
   endif
 
   return substitute(getline(tag_line), tag_pattern, '\1', '')
+endfunction
+
+function! s:Upcase(string)
+  return substitute(a:string, '\l', '\u\0', 'g')
 endfunction
