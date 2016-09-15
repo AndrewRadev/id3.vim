@@ -131,6 +131,7 @@ function! id3#UpdateFlac(filename)
   let command_line = 'metaflac '
   for [key, value] in items(tags)
     if value != ''
+      let command_line .= '--remove-tag='.key.' '
       let command_line .= '--set-tag='.key.'='.shellescape(value).' '
     endif
   endfor
