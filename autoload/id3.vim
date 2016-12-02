@@ -5,7 +5,7 @@ function! id3#ReadMp3(filename)
   endif
 
   let filename       = shellescape(a:filename)
-  let format_string  = '%'.join(['t', 'a', 'l', 'n', 'y', 'g', 'c'], '\n%')
+  let format_string  = '%'.join(['_t', '_a', '_l', '_n', '_y', '_g', '_c'], '\n%')
   let command_output = system("id3 -q '".format_string."' ".filename)
 
   if v:shell_error
