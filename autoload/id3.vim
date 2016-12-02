@@ -94,9 +94,7 @@ function! id3#UpdateMp3(filename)
 
   let command_line = 'id3 '
   for [key, value] in items(tags)
-    if value != ''
-      let command_line .= '-'.key.' '.shellescape(value).' '
-    endif
+    let command_line .= '-'.key.' '.shellescape(value).' '
   endfor
   let command_line .= shellescape(a:filename)
 
