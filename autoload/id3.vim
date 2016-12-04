@@ -92,7 +92,7 @@ function! id3#UpdateMp3(filename)
   let tags.g = s:FindTagValue('Genre')
   let tags.c = s:FindTagValue('Comment')
 
-  let command_line = 'id3 -d '
+  let command_line = 'id3 '
   for [key, value] in items(tags)
     if value != ''
       let command_line .= '-'.key.' '.shellescape(value).' '
