@@ -1,3 +1,5 @@
+![Demo](http://i.andrewradev.com/e3062961da3c802a1e860ef8e14cbc55.gif)
+
 ## Usage
 
 Edit an mp3 file. You'll see a buffer with its metadata stored as ID3 tags, formatted like this:
