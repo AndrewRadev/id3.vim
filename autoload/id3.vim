@@ -1,6 +1,8 @@
 function! id3#ReadMp3(filename)
   if s:CheckCommand('id3')
     call s:ReadMp3Id3(a:filename)
+  elseif s:CheckCommand('id3v2')
+    call s:ReadMp3Id3V2(a:filename)
   elseif s:CheckCommand('id3tool')
     call s:ReadMp3Id3Tool(a:filename)
   else
@@ -70,6 +72,40 @@ function! s:ReadMp3Id3Tool(filename)
         \   'Track No: '.tags[4],
         \   'Year:     '.tags[5],
         \   'Genre:    '.tags[6],
+        \ ])
+  $delete _
+  call cursor(1, 1)
+
+  set filetype=audio.mp3
+endfunction
+
+function! s:ReadMp3Id3V2(filename)
+  if !filereadable(a:filename)
+    echoerr "File does not exist, can't open MP3 metadata: ".a:filename
+    return
+  endif
+
+  let filename       = shellescape(a:filename)
+  let command_output = system("id3v2 -R ".filename)
+
+  if v:shell_error
+    echoerr "There was an error executing the `id3v2` command: ".command_output
+    return
+  endif
+
+  let tags = split(command_output, "\n")
+  let tags = map(tags, {key, value -> s:FormatID3ToolValue(value)})
+
+  call append(0, [
+        \   'File: '.a:filename,
+        \   repeat('=', len('File: '.a:filename)),
+        \   '',
+        \   'Title:    '.tags[5],
+        \   'Artist:   '.tags[2],
+        \   'Album:    '.tags[1],
+        \   'Track No: '.tags[6],
+        \   'Year:     '.tags[7],
+        \   'Genre:    '.tags[3],
         \ ])
   $delete _
   call cursor(1, 1)
