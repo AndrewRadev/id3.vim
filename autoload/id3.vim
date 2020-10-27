@@ -94,18 +94,17 @@ function! s:ReadMp3Id3v2(filename)
   endif
 
   let tags = split(command_output, "\n")
-  let tags = map(tags, {key, value -> s:FormatID3ToolValue(value)})
 
   call append(0, [
         \   'File: '.a:filename,
         \   repeat('=', len('File: '.a:filename)),
         \   '',
-        \   'Title:    '.s:GetV2Tag(tags, "Title"),
-        \   'Artist:   '.s:GetV2Tag(tags, "Artist"),
-        \   'Album:    '.s:GetV2Tag(tags, "Album"),
-        \   'Track No: '.s:GetV2Tag(tags, "Track No"),
-        \   'Year:     '.s:GetV2Tag(tags, "Year"),
-        \   'Genre:    '.s:GetV2Tag(tags, "Genre"),
+        \   'Title:    '.s:GetV2Tag(tags, "TIT2"),
+        \   'Artist:   '.s:GetV2Tag(tags, "TPE1"),
+        \   'Album:    '.s:GetV2Tag(tags, "TALB"),
+        \   'Track No: '.s:GetV2Tag(tags, "TRCK"),
+        \   'Year:     '.s:GetV2Tag(tags, "TYER"),
+        \   'Genre:    '.s:GetV2Tag(tags, "TCON"),
         \ ])
   $delete _
   call cursor(1, 1)
@@ -348,22 +347,9 @@ function! s:FormatID3ToolValue(string)
   endif
 endfunction
 
-function! s:GetV2Tag(tag_list, tag_name)
-  if a:tag_name == "Title"
-    return "Title"
-  elseif a:tag_name == "Artist"
-    return "Artist"
-  elseif a:tag_name == "Album"
-    return "Album"
-  elseif a:tag_name == "Track No"
-    return "Track No"
-  elseif a:tag_name == "Year"
-    return "Year"
-  elseif a:tag_name == "Genre"
-    return "Genre"
-  else
-    echoerr "Invalid tag specified for id3v2 in GetV2Tag" + tag_name
-  endif
+function! s:GetV2Tag(tag_list, tag_value) 
+  let required_tag = filter(a:tag_list, {key, value -> match(value, a:tag_value)})[0]
+  return trim(strpart(required_tag, stridx(required_tag, ":") + 1))
 endfunction
 
 function! s:Upcase(string)
