@@ -6,7 +6,7 @@ function! id3#ReadMp3(filename)
   elseif s:CheckCommand('id3tool')
     call s:ReadMp3Id3Tool(a:filename)
   else
-    echoerr "No suitable command-line tool found. Install one of: id3, id3tool"
+    echoerr "No suitable command-line tool found. Install one of: id3, id3v2, id3tool"
   endif
 endfunction
 
