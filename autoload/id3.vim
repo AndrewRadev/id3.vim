@@ -2,7 +2,7 @@ function! id3#ReadMp3(filename)
   if s:CheckCommand('id3')
     call s:ReadMp3Id3(a:filename)
   elseif s:CheckCommand('id3v2')
-    call s:ReadMp3Id3V2(a:filename)
+    call s:ReadMp3Id3v2(a:filename)
   elseif s:CheckCommand('id3tool')
     call s:ReadMp3Id3Tool(a:filename)
   else
@@ -79,7 +79,7 @@ function! s:ReadMp3Id3Tool(filename)
   set filetype=audio.mp3
 endfunction
 
-function! s:ReadMp3Id3V2(filename)
+function! s:ReadMp3Id3v2(filename)
   if !filereadable(a:filename)
     echoerr "File does not exist, can't open MP3 metadata: ".a:filename
     return
@@ -164,6 +164,8 @@ function! id3#UpdateMp3(filename)
   let saved_view = winsaveview()
   if s:CheckCommand('id3')
     call s:UpdateMp3Id3(a:filename)
+  elseif s:CheckCommand('id3v2')
+    call s:UpdateMp3Id3v2(a:filename)
   elseif s:CheckCommand('id3tool')
     call s:UpdateMp3Id3Tool(a:filename)
   else
@@ -226,6 +228,40 @@ function! s:UpdateMp3Id3Tool(filename)
   let output = system(command_line)
   if v:shell_error
     echoerr "There was an error executing the `id3tool` command: ".output
+    return
+  endif
+
+  if new_filename != a:filename
+    call rename(a:filename, new_filename)
+    exe 'file '.fnameescape(new_filename)
+    %delete _
+    call id3#ReadMp3(new_filename)
+  endif
+
+  set nomodified
+endfunction
+
+function! s:UpdateMp3Id3v2(filename)
+  let new_filename = s:FindTagValue('File')
+
+  let tags   = {}
+  let tags.t = s:FindTagValue('Title')
+  let tags.a = s:FindTagValue('Artist')
+  let tags.A = s:FindTagValue('Album')
+  let tags.T = s:FindTagValue('Track No')
+  let tags.y = s:FindTagValue('Year')
+  " Can only update genre through the code in id3v2
+  " let tags.g = matchstr(s:FindTagValue('Genre'), '([0-9]\{1,3})')
+
+  let command_line = 'id3v2 '
+  for [key, value] in items(tags)
+    let command_line .= '-'.key.' '.shellescape(value).' '
+  endfor
+  let command_line .= shellescape(a:filename)
+
+  let output = system(command_line)
+  if v:shell_error
+    echoerr "There was an error executing the `id3v2` command: ".output
     return
   endif
 
