@@ -1,4 +1,14 @@
 function! id3#ReadMp3(filename)
+  if s:CheckCommand('id3')
+    call s:ReadMp3Id3(a:filename)
+  elseif s:CheckCommand('id3tool')
+    call s:ReadMp3Id3Tool(a:filename)
+  else
+    echoerr "No suitable command-line tool found. Install one of: id3, id3tool"
+  endif
+endfunction
+
+function! s:ReadMp3Id3(filename)
   if !filereadable(a:filename)
     echoerr "File does not exist, can't open MP3 metadata: ".a:filename
     return
@@ -31,6 +41,10 @@ function! id3#ReadMp3(filename)
   call cursor(1, 1)
 
   set filetype=audio.mp3
+endfunction
+
+function! s:ReadMp3Id3Tool(filename)
+    call s:ReadMp3Id3(a:filename)
 endfunction
 
 function! id3#ReadFlac(filename)
@@ -151,6 +165,15 @@ function! id3#UpdateFlac(filename)
   endif
 
   set nomodified
+endfunction
+
+function! s:CheckCommand(command)
+  call system('which '.a:command)
+  if v:shell_error == 0
+    return 1
+  else
+    return 0
+  endif
 endfunction
 
 function! s:FindTagValue(tag_name)
