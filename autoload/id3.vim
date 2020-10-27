@@ -250,7 +250,7 @@ function! s:UpdateMp3Id3v2(filename)
   let tags.T = s:FindTagValue('Track No')
   let tags.y = s:FindTagValue('Year')
   " Can only update genre through the code in id3v2
-  " let tags.g = matchstr(s:FindTagValue('Genre'), '([0-9]\{1,3})')
+  let tags.g = matchstr(s:FindTagValue('Genre'), '([0-9]\{1,3})')
 
   let command_line = 'id3v2 '
   for [key, value] in items(tags)
