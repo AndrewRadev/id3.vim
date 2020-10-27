@@ -168,7 +168,7 @@ function! id3#UpdateMp3(filename)
   elseif s:CheckCommand('id3tool')
     call s:UpdateMp3Id3Tool(a:filename)
   else
-    echoerr "No suitable command-line tool found. Install one of: id3, id3tool"
+    echoerr "No suitable command-line tool found. Install one of: id3, id3v2, id3tool"
   endif
 endfunction
 
@@ -348,8 +348,20 @@ function! s:FormatID3ToolValue(string)
 endfunction
 
 function! s:GetV2Tag(tag_list, tag_value) 
-  let required_tag = filter(a:tag_list, {key, value -> match(value, a:tag_value)})[0]
-  return trim(strpart(required_tag, stridx(required_tag, ":") + 1))
+  let required_tag = filter(copy(a:tag_list), {key, value -> s:MatchTag(value, a:tag_value) != ""})
+  if empty(required_tag)
+    echoerr "Could not find a tag matching ".a:tag_value
+  endif
+  return trim(strpart(required_tag[0], stridx(required_tag[0], ":") + 1))
+endfunction
+
+function! s:MatchTag(value, expected_tag)
+  let split_value = split(a:value, ":")
+  if split_value[0] == a:expected_tag
+    return trim(split_value[1])
+  else
+    return ""
+  endif
 endfunction
 
 function! s:Upcase(string)
