@@ -58,7 +58,7 @@ function! s:ReadMp3Id3Tool(filename)
   endif
 
   let tags = split(command_output, "\n")
-  let tags = map(tags, {key, value -> s:GetValueAfterColon(value)})
+  let tags = map(tags, {key, value -> s:FormatID3ToolValue(value)})
 
   call append(0, [
         \   'File: '.a:filename,
@@ -249,12 +249,19 @@ function! s:CheckCommand(command)
   endif
 endfunction
 
-function! s:GetValueAfterColon(string)
+function! s:FormatID3ToolValue(string)
   let contains_colon = stridx(a:string, ":")
   if contains_colon == -1
     return trim(a:string)
   else
-    return trim(strpart(a:string, contains_colon + 1))
+    " Remove the genre code returned with the genre string, as only one of
+    " those can be used when updating the values with id3tool
+    let string_value = a:string
+    if match(string_value, "Genre:") == 0
+      let string_value = substitute(string_value, '\s(0x[0-9]\{2})', "", "g")
+    endif
+
+    return trim(strpart(string_value, contains_colon + 1))
   endif
 endfunction
 
