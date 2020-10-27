@@ -126,6 +126,16 @@ endfunction
 
 function! id3#UpdateMp3(filename)
   let saved_view = winsaveview()
+  if s:CheckCommand('id3')
+    call s:UpdateMp3Id3(a:filename)
+  elseif s:CheckCommand('id3tool')
+    call s:UpdateMp3Id3Tool(a:filename)
+  else
+    echoerr "No suitable command-line tool found. Install one of: id3, id3tool"
+  endif
+endfunction
+
+function! s:UpdateMp3Id3(filename)
   let new_filename = s:FindTagValue('File')
 
   let tags   = {}
@@ -157,6 +167,39 @@ function! id3#UpdateMp3(filename)
   endif
 
   call winrestview(saved_view)
+  set nomodified
+endfunction
+
+function! s:UpdateMp3Id3Tool(filename)
+  let new_filename = s:FindTagValue('File')
+
+  let tags   = {}
+  let tags.t = s:FindTagValue('Title')
+  let tags.r = s:FindTagValue('Artist')
+  let tags.a = s:FindTagValue('Album')
+  let tags.c = s:FindTagValue('Track No')
+  let tags.y = s:FindTagValue('Year')
+  let tags.G = s:FindTagValue('Genre')
+
+  let command_line = 'id3tool '
+  for [key, value] in items(tags)
+    let command_line .= '-'.key.' '.shellescape(value).' '
+  endfor
+  let command_line .= shellescape(a:filename)
+
+  let output = system(command_line)
+  if v:shell_error
+    echoerr "There was an error executing the `id3tool` command: ".output
+    return
+  endif
+
+  if new_filename != a:filename
+    call rename(a:filename, new_filename)
+    exe 'file '.fnameescape(new_filename)
+    %delete _
+    call id3#ReadMp3(new_filename)
+  endif
+
   set nomodified
 endfunction
 
