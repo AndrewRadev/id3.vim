@@ -100,12 +100,12 @@ function! s:ReadMp3Id3v2(filename)
         \   'File: '.a:filename,
         \   repeat('=', len('File: '.a:filename)),
         \   '',
-        \   'Title:    '.tags[5],
-        \   'Artist:   '.tags[2],
-        \   'Album:    '.tags[1],
-        \   'Track No: '.tags[6],
-        \   'Year:     '.tags[7],
-        \   'Genre:    '.tags[3],
+        \   'Title:    '.s:GetV2Tag(tags, "Title"),
+        \   'Artist:   '.s:GetV2Tag(tags, "Artist"),
+        \   'Album:    '.s:GetV2Tag(tags, "Album"),
+        \   'Track No: '.s:GetV2Tag(tags, "Track No"),
+        \   'Year:     '.s:GetV2Tag(tags, "Year"),
+        \   'Genre:    '.s:GetV2Tag(tags, "Genre"),
         \ ])
   $delete _
   call cursor(1, 1)
@@ -345,6 +345,24 @@ function! s:FormatID3ToolValue(string)
     endif
 
     return trim(strpart(string_value, contains_colon + 1))
+  endif
+endfunction
+
+function! s:GetV2Tag(tag_list, tag_name)
+  if a:tag_name == "Title"
+    return "Title"
+  elseif a:tag_name == "Artist"
+    return "Artist"
+  elseif a:tag_name == "Album"
+    return "Album"
+  elseif a:tag_name == "Track No"
+    return "Track No"
+  elseif a:tag_name == "Year"
+    return "Year"
+  elseif a:tag_name == "Genre"
+    return "Genre"
+  else
+    echoerr "Invalid tag specified for id3v2 in GetV2Tag" + tag_name
   endif
 endfunction
 
