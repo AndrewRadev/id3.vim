@@ -44,7 +44,37 @@ function! s:ReadMp3Id3(filename)
 endfunction
 
 function! s:ReadMp3Id3Tool(filename)
-    call s:ReadMp3Id3(a:filename)
+  if !filereadable(a:filename)
+    echoerr "File does not exist, can't open MP3 metadata: ".a:filename
+    return
+  endif
+
+  let filename       = shellescape(a:filename)
+  let command_output = system("id3tool ".filename)
+
+  if v:shell_error
+    echoerr "There was an error executing the `id3tool` command: ".command_output
+    return
+  endif
+
+  let tags = split(command_output, "\n")
+  let tags = map(tags, 'v:val != "<empty>" ? v:val : ""')
+
+  call append(0, [
+        \   'File: '.a:filename,
+        \   repeat('=', len('File: '.a:filename)),
+        \   '',
+        \   'Title:    '.tags[1],
+        \   'Artist:   '.tags[2],
+        \   'Album:    '.tags[3],
+        \   'Track No: '.tags[4],
+        \   'Year:     '.tags[5],
+        \   'Genre:    '.tags[6],
+        \ ])
+  $delete _
+  call cursor(1, 1)
+
+  set filetype=audio.mp3
 endfunction
 
 function! id3#ReadFlac(filename)
