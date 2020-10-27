@@ -321,6 +321,17 @@ function! s:CheckCommand(command)
   endif
 endfunction
 
+function! s:FindTagValue(tag_name)
+  let tag_pattern = '^'.a:tag_name.':\s*\(.*\)$'
+  let tag_line    = search(tag_pattern, 'n')
+
+  if tag_line <= 0
+    return ''
+  endif
+
+  return substitute(getline(tag_line), tag_pattern, '\1', '')
+endfunction
+
 function! s:FormatID3ToolValue(string)
   let contains_colon = stridx(a:string, ":")
   if contains_colon == -1
@@ -335,17 +346,6 @@ function! s:FormatID3ToolValue(string)
 
     return trim(strpart(string_value, contains_colon + 1))
   endif
-endfunction
-
-function! s:FindTagValue(tag_name)
-  let tag_pattern = '^'.a:tag_name.':\s*\(.*\)$'
-  let tag_line    = search(tag_pattern, 'n')
-
-  if tag_line <= 0
-    return ''
-  endif
-
-  return substitute(getline(tag_line), tag_pattern, '\1', '')
 endfunction
 
 function! s:Upcase(string)
