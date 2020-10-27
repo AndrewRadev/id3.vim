@@ -58,7 +58,7 @@ function! s:ReadMp3Id3Tool(filename)
   endif
 
   let tags = split(command_output, "\n")
-  let tags = map(tags, 'v:val != "<empty>" ? v:val : ""')
+  let tags = map(tags, {key, value -> s:GetValueAfterColon(value)})
 
   call append(0, [
         \   'File: '.a:filename,
@@ -203,6 +203,15 @@ function! s:CheckCommand(command)
     return 1
   else
     return 0
+  endif
+endfunction
+
+function! s:GetValueAfterColon(string)
+  let contains_colon = stridx(a:string, ":")
+  if contains_colon == -1
+    return trim(a:string)
+  else
+    return trim(strpart(a:string, contains_colon + 1))
   endif
 endfunction
 
