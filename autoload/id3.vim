@@ -267,9 +267,10 @@ function! s:UpdateMp3Id3v2(filename)
   if new_filename != a:filename
     call rename(a:filename, new_filename)
     exe 'file '.fnameescape(new_filename)
-    %delete _
-    call id3#ReadMp3(new_filename)
   endif
+  " Call read again to display genre updates
+  %delete _
+  call id3#ReadMp3(new_filename)
 
   set nomodified
 endfunction
