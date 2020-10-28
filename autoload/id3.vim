@@ -351,7 +351,7 @@ endfunction
 function! s:GetV2Tag(tag_list, tag_value) 
   let required_tag = filter(copy(a:tag_list), {key, value -> s:MatchTag(value, a:tag_value) != ""})
   if empty(required_tag)
-    echoerr "Could not find a tag matching ".a:tag_value
+    return ""
   endif
   return trim(strpart(required_tag[0], stridx(required_tag[0], ":") + 1))
 endfunction
