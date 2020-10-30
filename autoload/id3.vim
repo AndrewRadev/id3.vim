@@ -99,12 +99,12 @@ function! s:ReadMp3Id3v2(filename)
         \   'File: '.a:filename,
         \   repeat('=', len('File: '.a:filename)),
         \   '',
-        \   'Title:    '.s:GetV2Tag(tags, "TIT2"),
-        \   'Artist:   '.s:GetV2Tag(tags, "TPE1"),
-        \   'Album:    '.s:GetV2Tag(tags, "TALB"),
-        \   'Track No: '.s:GetV2Tag(tags, "TRCK"),
-        \   'Year:     '.s:GetV2Tag(tags, "TYER"),
-        \   'Genre:    '.s:GetV2Tag(tags, "TCON"),
+        \   'Title:    '.s:GetV2Tag(tags, "TIT2", "TT2"),
+        \   'Artist:   '.s:GetV2Tag(tags, "TPE1", "TP1"),
+        \   'Album:    '.s:GetV2Tag(tags, "TALB", "TAL"),
+        \   'Track No: '.s:GetV2Tag(tags, "TRCK", "TRK"),
+        \   'Year:     '.s:GetV2Tag(tags, "TYER", "TYE"),
+        \   'Genre:    '.s:GetV2Tag(tags, "TCON", "TCO"),
         \ ])
   $delete _
   call cursor(1, 1)
@@ -251,6 +251,8 @@ function! s:UpdateMp3Id3v2(filename)
   let tags.y = s:FindTagValue('Year')
   " Can only update genre through the code in id3v2
   let tags.g = matchstr(s:FindTagValue('Genre'), '([0-9]\{1,3})')
+  " Force band/orchestra/accompaniment to be same as Artist value
+  let tags["-TPE2"] = s:FindTagValue("Artist")
 
   let command_line = 'id3v2 '
   for [key, value] in items(tags)
@@ -348,8 +350,8 @@ function! s:FormatID3ToolValue(string)
   endif
 endfunction
 
-function! s:GetV2Tag(tag_list, tag_value) 
-  let required_tag = filter(copy(a:tag_list), {key, value -> s:MatchTag(value, a:tag_value) != ""})
+function! s:GetV2Tag(tag_list, tag_value, old_tag_value) 
+  let required_tag = filter(copy(a:tag_list), {key, value -> s:MatchTag(value, a:tag_value) != "" || s:MatchTag(value, a:old_tag_value) != ""})
   if empty(required_tag)
     return ""
   endif
