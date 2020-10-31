@@ -360,6 +360,10 @@ endfunction
 
 function! s:MatchTag(value, expected_tag)
   let split_value = split(a:value, ":")
+  if empty(split_value)
+    return ""
+  endif
+
   if split_value[0] == a:expected_tag
     return trim(split_value[1])
   else
