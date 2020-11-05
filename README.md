@@ -40,7 +40,7 @@ The plugin also supports FLAC files (somewhat misleadingly, since they don't use
 
 On other platforms, you can probably use your favorite package manager to search for these.
 
-## Updating Genres using id3v2
+## Updating genres using id3v2
 
 The ID3 specification attributes a specific number to each genre.
 To edit the genre when using the `id3v2` tool with this plugin you just need to set the number inside the brackets to the correct genre identifier.
