@@ -19,7 +19,7 @@ Editing the buffer will update the tags. You can also rename the file by changin
 
 ## Dependencies
 
-### mp3
+### mp3 files
 
 To edit an mp3 file you need a command-line id3 tag editor installed.
 This plugin works with:
@@ -32,7 +32,7 @@ You should be able to install any of these with your system's package manager, f
 
     pacman -S id3
 
-### flac
+### flac files
 
 The plugin also supports FLAC files (somewhat misleadingly, since they don't use id3 tags). For those, you'll need the `metaflac` command, which, on Arch Linux, comes from the `flac` package:
 
