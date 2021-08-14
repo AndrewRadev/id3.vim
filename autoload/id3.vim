@@ -81,6 +81,7 @@ function! id3#ReadFlac(filename)
 endfunction
 
 function! id3#UpdateMp3(filename)
+  let saved_view = winsaveview()
   let new_filename = s:FindTagValue('File')
 
   let tags   = {}
@@ -111,6 +112,7 @@ function! id3#UpdateMp3(filename)
     call id3#ReadMp3(new_filename)
   endif
 
+  call winrestview(saved_view)
   set nomodified
 endfunction
 
