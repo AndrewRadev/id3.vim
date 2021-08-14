@@ -17,7 +17,7 @@ function! id3#ReadMp3(filename)
   let tags = map(tags, 'v:val != "<empty>" ? v:val : ""')
   call append(0, [
         \   'File: '.a:filename,
-        \   repeat('=', len('File: '.a:filename)),
+        \   repeat('=', strchars('File: '.a:filename)),
         \   '',
         \   'Title:    '.tags[0],
         \   'Artist:   '.tags[1],
