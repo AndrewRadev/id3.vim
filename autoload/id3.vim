@@ -161,6 +161,7 @@ endfunction
 
 function! id3#UpdateMp3(filename)
   let saved_view = winsaveview()
+
   if s:CheckCommand('id3')
     call s:UpdateMp3Id3(a:filename)
   elseif s:CheckCommand('id3v2')
@@ -170,6 +171,8 @@ function! id3#UpdateMp3(filename)
   else
     echoerr "No suitable command-line tool found. Install one of: id3, id3v2, id3tool"
   endif
+
+  call winrestview(saved_view)
 endfunction
 
 function! s:UpdateMp3Id3(filename)
@@ -203,7 +206,6 @@ function! s:UpdateMp3Id3(filename)
     call id3#ReadMp3(new_filename)
   endif
 
-  call winrestview(saved_view)
   set nomodified
 endfunction
 
@@ -348,7 +350,7 @@ function! s:FormatID3ToolValue(string)
   endif
 endfunction
 
-function! s:GetV2Tag(tag_list, tag_value, old_tag_value) 
+function! s:GetV2Tag(tag_list, tag_value, old_tag_value)
   let required_tag = filter(copy(a:tag_list), {key, value -> s:MatchTag(value, a:tag_value) != "" || s:MatchTag(value, a:old_tag_value) != ""})
   if empty(required_tag)
     return ""
