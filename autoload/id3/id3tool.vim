@@ -13,18 +13,16 @@ function! id3#id3tool#Read(filename)
   endif
 
   let tags = split(command_output, "\n")
-  let tags = map(tags, {key, value -> s:FormatID3ToolValue(value)})
 
   call append(0, [
         \   'File: '.a:filename,
         \   repeat('=', len('File: '.a:filename)),
         \   '',
-        \   'Title:    '.tags[1],
-        \   'Artist:   '.tags[2],
-        \   'Album:    '.tags[3],
-        \   'Track No: '.tags[4],
-        \   'Year:     '.tags[5],
-        \   'Genre:    '.tags[6],
+        \   'Title:    '.s:ParseTag(tags, 'Song Title'),
+        \   'Artist:   '.s:ParseTag(tags, 'Artist'),
+        \   'Album:    '.s:ParseTag(tags, 'Album'),
+        \   'Track No: '.s:ParseTag(tags, 'Track'),
+        \   'Year:     '.s:ParseTag(tags, 'Year'),
         \ ])
   $delete _
   call cursor(1, 1)
@@ -41,7 +39,6 @@ function! id3#id3tool#Update(filename)
   let tags.a = id3#utils#FindTagValue('Album')
   let tags.c = id3#utils#FindTagValue('Track No')
   let tags.y = id3#utils#FindTagValue('Year')
-  let tags.G = id3#utils#FindTagValue('Genre')
 
   let command_line = 'id3tool '
   for [key, value] in items(tags)
@@ -78,5 +75,29 @@ function! s:FormatID3ToolValue(string)
     endif
 
     return trim(strpart(string_value, contains_colon + 1))
+  endif
+endfunction
+
+function! s:ParseTag(tag_list, tag_value)
+  let required_tag = filter(
+        \   copy(a:tag_list),
+        \   {key, value -> s:MatchTag(value, a:tag_value) != ""}
+        \ )
+  if empty(required_tag)
+    return ""
+  endif
+  return trim(strpart(required_tag[0], stridx(required_tag[0], ":") + 1))
+endfunction
+
+function! s:MatchTag(value, expected_tag)
+  let split_value = split(a:value, ":")
+  if empty(split_value)
+    return ""
+  endif
+
+  if split_value[0] == a:expected_tag
+    return trim(split_value[1])
+  else
+    return ""
   endif
 endfunction
