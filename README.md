@@ -32,6 +32,8 @@ You should be able to install any of these with your system's package manager, f
 
     pacman -S id3
 
+Be warned that there are some open [issues](https://github.com/AndrewRadev/id3.vim/issues) with `id3v2` and `id3tool`. I plan to improve things soon, but we'll see how it goes. The original `id3` tool has worked reliably for me so far other than some issues with characters in certain filenames.
+
 ### flac files
 
 The plugin also supports FLAC files (somewhat misleadingly, since they don't use id3 tags). For those, you'll need the `metaflac` command, which, on Arch Linux, comes from the `flac` package:
