@@ -12,5 +12,9 @@ module Support
     def assert_file_contents(string)
       expect(IO.read(filename).strip).to eq(string.strip)
     end
+
+    def command_exists?(command)
+      system("which #{command}", [:out, :err] => '/dev/null')
+    end
   end
 end
