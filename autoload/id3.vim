@@ -18,6 +18,14 @@ function! id3#ReadFlac(filename)
   endif
 endfunction
 
+function! id3#ReadOpus(filename)
+  if s:CheckCommand('opustags')
+    call id3#opus#Read(a:filename)
+  else
+    echoerr "No suitable command-line tool found. Please install `opustags`"
+  endif
+endfunction
+
 function! id3#UpdateMp3(filename)
   let saved_view = winsaveview()
 
@@ -41,6 +49,18 @@ function! id3#UpdateFlac(filename)
     call id3#flac#Update(a:filename)
   else
     echoerr "No suitable command-line tool found. Please install `metaflac`"
+  endif
+
+  call winrestview(saved_view)
+endfunction
+
+function! id3#UpdateOpus(filename)
+  let saved_view = winsaveview()
+
+  if s:CheckCommand('opustags')
+    call id3#opus#Update(a:filename)
+  else
+    echoerr "No suitable command-line tool found. Please install `opustags`"
   endif
 
   call winrestview(saved_view)

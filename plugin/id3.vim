@@ -12,5 +12,8 @@ autocmd BufWriteCmd *.mp3 call id3#UpdateMp3(expand('<afile>'))
 autocmd BufReadCmd *.flac  call id3#ReadFlac(expand('<afile>'))
 autocmd BufWriteCmd *.flac call id3#UpdateFlac(expand('<afile>'))
 
+autocmd BufReadCmd *.opus  call id3#ReadOpus(expand('<afile>'))
+autocmd BufWriteCmd *.opus call id3#UpdateOpus(expand('<afile>'))
+
 let &cpo = s:keepcpo
 unlet s:keepcpo

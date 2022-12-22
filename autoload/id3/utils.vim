@@ -6,5 +6,5 @@ function! id3#utils#FindTagValue(tag_name)
     return ''
   endif
 
-  return substitute(getline(tag_line), tag_pattern, '\1', '')
+  return substitute(trim(getline(tag_line)), tag_pattern, '\1', '')
 endfunction
