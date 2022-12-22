@@ -1,0 +1,69 @@
+*id3.txt*	Edit an mp3/flac/opus file's metadata
+
+==============================================================================
+CONTENTS                                                    *id3*   *id3-contents*
+
+    Installation................................: |id3-installation|
+    Usage.......................................: |id3-usage|
+    Settings....................................: |id3-settings|
+    Issues......................................: |id3-issues|
+
+
+==============================================================================
+INSTALLATION                                                  *id3-installation*
+
+The easiest way to install the plugin is with a plugin manager:
+
+- vim-plug: https://github.com/junegunn/vim-plug
+- Vundle:   https://github.com/VundleVim/Vundle.vim
+
+If you use one, just follow the instructions in its documentation.
+
+You can install the plugin yourself using Vim's |packages| functionality by
+cloning the project (or adding it as a submodule) under
+`~/.vim/pack/<any-name>/start/`. For example:
+>
+    git clone https://github.com/AndrewRadev/id3.vim ~/.vim/pack/_/start/id3
+<
+This should automatically load the plugin for you on Vim start. Alternatively,
+you can add it to `~/.vim/pack/<any-name>/opt/` instead and load it in your
+.vimrc manually with:
+>
+    packadd id3
+<
+If you'd rather not use git, you can download the files from the "releases"
+tab and unzip them in the relevant directory:
+https://github.com/AndrewRadev/id3.vim/releases.
+
+
+==============================================================================
+USAGE                                                                *id3-usage*
+
+TODO
+
+
+==============================================================================
+SETTINGS                                                          *id3-settings*
+
+                                                            *g:id3_mp3_backends*
+>
+    let g:id3_mp3_backends = ['id3v2']
+<
+Default value: ['id3', 'id3v2', 'id3tool']
+
+This variable allows you to specify which tools to use to read and write tags
+and what order to try them in. Disappointingly, all of these have various
+issues and availability.
+
+For flac and opus files, there's only one set of comand-line tools used (for
+now), so they're not configurable at this time.
+
+
+==============================================================================
+ISSUES                                                         *id3-issues*
+
+Any issues and suggestions are very welcome on the github bugtracker:
+https://github.com/AndrewRadev/id3.vim/issues
+
+
+vim:tw=78:sw=4:ft=help:norl:
