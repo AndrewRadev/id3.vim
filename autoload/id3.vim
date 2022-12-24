@@ -1,7 +1,8 @@
 let s:id3_backend_mapping = {
-      \ 'id3':     ['id3#id3#Read',     'id3#id3#Update'],
-      \ 'id3v2':   ['id3#id3v2#Read',   'id3#id3v2#Update'],
-      \ 'id3tool': ['id3#id3tool#Read', 'id3#id3tool#Update'],
+      \ 'id3-json': ['id3#id3_json#Read', 'id3#id3_json#Update'],
+      \ 'id3':      ['id3#id3#Read',      'id3#id3#Update'],
+      \ 'id3v2':    ['id3#id3v2#Read',    'id3#id3v2#Update'],
+      \ 'id3tool':  ['id3#id3tool#Read',  'id3#id3tool#Update'],
       \ }
 
 function! id3#ReadMp3(filename)
