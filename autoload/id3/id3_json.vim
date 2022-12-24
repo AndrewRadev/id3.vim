@@ -22,13 +22,13 @@ function! id3#id3_json#Read(filename) abort
         \   'File: '.a:filename,
         \   repeat('=', strchars('File: '.a:filename)),
         \   '',
-        \   'Title:    '.tags.title,
-        \   'Artist:   '.tags.artist,
-        \   'Album:    '.tags.album,
-        \   'Track No: '.tags.track,
-        \   'Year:     '.tags.year,
-        \   'Genre:    '.tags.genre,
-        \   'Comment:  '.tags.comment,
+        \   'Title:    '.get(tags, 'title', ''),
+        \   'Artist:   '.get(tags, 'artist', ''),
+        \   'Album:    '.get(tags, 'album', ''),
+        \   'Track No: '.get(tags, 'track', ''),
+        \   'Year:     '.get(tags, 'year', ''),
+        \   'Genre:    '.get(tags, 'genre', ''),
+        \   'Comment:  '.get(tags, 'comment', ''),
         \ ])
   $delete _
   call cursor(1, 1)
