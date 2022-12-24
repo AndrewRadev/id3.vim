@@ -49,11 +49,12 @@ SETTINGS                                                          *id3-settings*
 >
     let g:id3_mp3_backends = ['id3v2']
 <
-Default value: ['id3', 'id3v2', 'id3tool']
+Default value: ['id3-json', 'id3', 'id3v2', 'id3tool']
 
 This variable allows you to specify which tools to use to read and write tags
-and what order to try them in. Disappointingly, all of these have various
-issues and availability.
+and what order to try them in. The most reliable one should be "id3-json",
+because I wrote it specifically for the project. Installation instructions can
+be found here: https://github.com/AndrewRadev/rust-id3-json
 
 For flac and opus files, there's only one set of comand-line tools used (for
 now), so they're not configurable at this time.
