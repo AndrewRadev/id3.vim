@@ -19,7 +19,7 @@ describe "mp3" do
         expect(buffer_contents).to match /^Album:\s+Echoes From The Past/
       end
 
-      it "can update mp3 files using" do
+      it "can update mp3 files' contents" do
         vim.edit 'fixtures/attempt_1.mp3'
 
         vim.search('^Title:\s\+\zs\S')
