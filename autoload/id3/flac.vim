@@ -1,4 +1,4 @@
-function! id3#flac#Read(filename)
+function! id3#flac#Read(command, filename)
   if !filereadable(a:filename)
     echoerr "File does not exist, can't open FLAC metadata: ".a:filename
     return
@@ -7,7 +7,7 @@ function! id3#flac#Read(filename)
   let filename       = shellescape(a:filename)
   let tag_names      = ['TITLE', 'ARTIST', 'ALBUM', 'TRACKNUMBER', 'DATE', 'GENRE', 'DESCRIPTION']
   let tag_string     = join(map(copy(tag_names), '"--show-tag=".v:val'), ' ')
-  let command_output = systemlist('metaflac '.tag_string.' '.filename)
+  let command_output = systemlist(a:command.' '.tag_string.' '.filename)
 
   if v:shell_error
     echoerr "There was an error executing the `metaflac` command: ".string(command_output)
@@ -45,7 +45,7 @@ function! id3#flac#Read(filename)
   set filetype=audio.flac
 endfunction
 
-function! id3#flac#Update(filename)
+function! id3#flac#Update(command, filename)
   let new_filename = id3#utils#FindTagValue('File')
 
   let tags             = {}
@@ -57,7 +57,7 @@ function! id3#flac#Update(filename)
   let tags.GENRE       = id3#utils#FindTagValue('Genre')
   let tags.DESCRIPTION = id3#utils#FindTagValue('Description')
 
-  let command_line = 'metaflac '
+  let command_line = a:command . ' '
   for [key, value] in items(tags)
     if value != ''
       let command_line .= '--remove-tag='.key.' '

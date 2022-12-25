@@ -1,11 +1,11 @@
-function! id3#id3v2#Read(filename)
+function! id3#id3v2#Read(command, filename)
   if !filereadable(a:filename)
     echoerr "File does not exist, can't open MP3 metadata: ".a:filename
     return
   endif
 
   let filename       = shellescape(a:filename)
-  let command_output = system("id3v2 -R ".filename)
+  let command_output = system(a:command . ' -R ' . filename)
 
   if v:shell_error
     echoerr "There was an error executing the `id3v2` command: ".command_output
@@ -31,7 +31,7 @@ function! id3#id3v2#Read(filename)
   set filetype=audio.mp3
 endfunction
 
-function! id3#id3v2#Update(filename)
+function! id3#id3v2#Update(command, filename)
   let new_filename = id3#utils#FindTagValue('File')
 
   let tags   = {}
@@ -43,7 +43,7 @@ function! id3#id3v2#Update(filename)
   " Can only update genre through the code in id3v2
   let tags.g = matchstr(id3#utils#FindTagValue('Genre'), '([0-9]\{1,3})')
 
-  let command_line = 'id3v2 '
+  let command_line = a:command . ' '
   for [key, value] in items(tags)
     let command_line .= '-'.key.' '.shellescape(value).' '
   endfor
@@ -61,7 +61,7 @@ function! id3#id3v2#Update(filename)
   endif
   " Call read again to display genre updates
   %delete _
-  call id3#id3v2#Read(new_filename)
+  call id3#id3v2#Read(a:command, new_filename)
 
   set nomodified
 endfunction

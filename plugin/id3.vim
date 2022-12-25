@@ -10,6 +10,10 @@ if !exists('g:id3_mp3_backends')
   let g:id3_mp3_backends = ['id3-json', 'id3', 'id3v2', 'id3tool']
 endif
 
+if !exists('g:id3_executable_directory')
+  let g:id3_executable_directory = ''
+endif
+
 autocmd BufReadCmd *.mp3  call id3#ReadMp3(expand('<afile>'))
 autocmd BufWriteCmd *.mp3 call id3#UpdateMp3(expand('<afile>'))
 

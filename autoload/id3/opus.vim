@@ -1,10 +1,10 @@
-function! id3#opus#Read(filename)
+function! id3#opus#Read(command, filename)
   if !filereadable(a:filename)
     echoerr "File does not exist, can't open opus metadata: ".a:filename
     return
   endif
 
-  let command_output = systemlist('opustags '. shellescape(a:filename))
+  let command_output = systemlist(a:command . ' '. shellescape(a:filename))
   if v:shell_error
     echoerr "There was an error executing the `opustags` command: ".string(command_output)
     return
@@ -37,7 +37,7 @@ function! id3#opus#Read(filename)
   set filetype=audio.opus
 endfunction
 
-function! id3#opus#Update(filename)
+function! id3#opus#Update(command, filename)
   let new_filename = id3#utils#FindTagValue('File')
 
   let tags             = {}
@@ -48,7 +48,7 @@ function! id3#opus#Update(filename)
   let tags.genre       = id3#utils#FindTagValue('Genre')
   let tags.DESCRIPTION = id3#utils#FindTagValue('Description')
 
-  let command_line = 'opustags -i '
+  let command_line = a:command . ' -i '
   for [key, value] in items(tags)
     if value != ''
       let command_line .= '--set '.key.'='.shellescape(value).' '

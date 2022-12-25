@@ -11,10 +11,11 @@ function! id3#ReadMp3(filename)
   endif
 
   for backend in g:id3_mp3_backends
-    if s:CheckCommand(backend)
+    let command = s:FindCommand(backend)
+    if command != ''
       let [read_callback, update_callback] = s:id3_backend_mapping[backend]
-      call call(read_callback, [a:filename])
-      let b:update_callback = update_callback
+      call call(read_callback, [command, a:filename])
+      let b:update_callback = [update_callback, command]
       return
     endif
   endfor
@@ -23,16 +24,18 @@ function! id3#ReadMp3(filename)
 endfunction
 
 function! id3#ReadFlac(filename)
-  if s:CheckCommand('metaflac')
-    call id3#flac#Read(a:filename)
+  let command = s:FindCommand('metaflac')
+  if command != ''
+    call id3#flac#Read(command, a:filename)
   else
     echoerr "No suitable command-line tool found. Please install `metaflac`"
   endif
 endfunction
 
 function! id3#ReadOpus(filename)
-  if s:CheckCommand('opustags')
-    call id3#opus#Read(a:filename)
+  let command = s:FindCommand('opustags')
+  if command != ''
+    call id3#opus#Read(command, a:filename)
   else
     echoerr "No suitable command-line tool found. Please install `opustags`"
   endif
@@ -46,15 +49,18 @@ function! id3#UpdateMp3(filename)
     return
   endif
 
-  call call(b:update_callback, [a:filename])
+  let [callback, command] = b:update_callback
+
+  call call(callback, [command, a:filename])
   call winrestview(saved_view)
 endfunction
 
 function! id3#UpdateFlac(filename)
   let saved_view = winsaveview()
 
-  if s:CheckCommand('metaflac')
-    call id3#flac#Update(a:filename)
+  let command = s:FindCommand('metaflac')
+  if command != ''
+    call id3#flac#Update(command, a:filename)
   else
     echoerr "No suitable command-line tool found. Please install `metaflac`"
   endif
@@ -65,8 +71,9 @@ endfunction
 function! id3#UpdateOpus(filename)
   let saved_view = winsaveview()
 
-  if s:CheckCommand('opustags')
-    call id3#opus#Update(a:filename)
+  let command = s:FindCommand('opustags')
+  if command != ''
+    call id3#opus#Update(command, a:filename)
   else
     echoerr "No suitable command-line tool found. Please install `opustags`"
   endif
@@ -74,11 +81,22 @@ function! id3#UpdateOpus(filename)
   call winrestview(saved_view)
 endfunction
 
-function! s:CheckCommand(command)
-  call system('which '.a:command)
-  if v:shell_error == 0
-    return 1
+function! s:FindCommand(command)
+  if g:id3_executable_directory != ''
+    if isabsolutepath(g:id3_executable_directory)
+      let local_file = g:id3_executable_directory.'/'.a:command
+    else
+      let local_file = findfile(g:id3_executable_directory.'/'.a:command, escape(&runtimepath, ' '))
+    endif
+
+    if local_file != '' && filereadable(local_file)
+      return local_file
+    endif
+  endif
+
+  if executable(a:command)
+    return a:command
   else
-    return 0
+    return ''
   endif
 endfunction

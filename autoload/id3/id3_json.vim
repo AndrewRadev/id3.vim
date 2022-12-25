@@ -1,11 +1,11 @@
-function! id3#id3_json#Read(filename) abort
+function! id3#id3_json#Read(command, filename) abort
   if !filereadable(a:filename)
     echoerr "File does not exist, can't open MP3 metadata: ".a:filename
     return
   endif
 
   let filename       = shellescape(a:filename)
-  let command_output = system("id3-json " . filename)
+  let command_output = system(a:command . ' ' . filename)
   if v:shell_error
     echoerr "There was an error executing the `id3-json` command: " . command_output
     return
@@ -36,7 +36,7 @@ function! id3#id3_json#Read(filename) abort
   set filetype=audio.mp3
 endfunction
 
-function! id3#id3_json#Update(filename) abort
+function! id3#id3_json#Update(command, filename) abort
   let new_filename = id3#utils#FindTagValue('File')
   let tags = {}
 
@@ -50,7 +50,7 @@ function! id3#id3_json#Update(filename) abort
 
   let tags = s:StringToNull(tags)
 
-  let command_line = 'id3-json --write ' . shellescape(a:filename)
+  let command_line = a:command . ' --write ' . shellescape(a:filename)
   let output = system(command_line, json_encode(tags))
   if v:shell_error
     echoerr "There was an error executing the `id3-json` command: ".output

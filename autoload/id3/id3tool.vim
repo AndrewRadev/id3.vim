@@ -1,11 +1,11 @@
-function! id3#id3tool#Read(filename)
+function! id3#id3tool#Read(command, filename)
   if !filereadable(a:filename)
     echoerr "File does not exist, can't open MP3 metadata: ".a:filename
     return
   endif
 
   let filename       = shellescape(a:filename)
-  let command_output = system("id3tool ".filename)
+  let command_output = system(a:command . ' ' . filename)
 
   if v:shell_error
     echoerr "There was an error executing the `id3tool` command: ".command_output
@@ -30,7 +30,7 @@ function! id3#id3tool#Read(filename)
   set filetype=audio.mp3
 endfunction
 
-function! id3#id3tool#Update(filename)
+function! id3#id3tool#Update(command, filename)
   let new_filename = id3#utils#FindTagValue('File')
 
   let tags   = {}
@@ -40,7 +40,7 @@ function! id3#id3tool#Update(filename)
   let tags.c = id3#utils#FindTagValue('Track No')
   let tags.y = id3#utils#FindTagValue('Year')
 
-  let command_line = 'id3tool '
+  let command_line = a:command . ' '
   for [key, value] in items(tags)
     let command_line .= '-'.key.' '.shellescape(value).' '
   endfor
