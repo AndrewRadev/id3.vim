@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe "mp3" do
-  ['id3', 'id3v2', 'id3tool'].each do |backend|
+  ['id3-json', 'id3', 'id3v2'].each do |backend|
     describe "backed by #{backend}" do
       before :each do
         skip "Backend not installed: #{backend}" if !command_exists?(backend)
@@ -33,6 +33,19 @@ describe "mp3" do
 
         expect(buffer_contents).to match /^Title:\s+New title/
         expect(buffer_contents).to match /^Artist:\s+New artist/
+      end
+
+      if backend == 'id3-json'
+        it "can update a v2.4 file's date" do
+          vim.edit 'fixtures/attempt_1.mp3'
+
+          vim.search('^Date:\s\+\zs\S')
+          vim.normal 'C2023-06'
+          vim.write
+
+          buffer_contents = get_buffer_contents
+          expect(buffer_contents).to match /^Date:\s+2023-06/
+        end
       end
     end
   end

@@ -18,18 +18,39 @@ function! id3#id3_json#Read(command, filename) abort
   endif
 
   let tags = s:NullToString(json.data)
-  call append(0, [
-        \   'File: '.a:filename,
-        \   repeat('=', strchars('File: '.a:filename)),
+  let tag_version = json.version
+
+  let file_line = 'File: '.a:filename
+  let version_line = 'Version: '.tag_version
+
+  let lines = [
+        \   file_line,
+        \   repeat('=', strchars(file_line)),
         \   '',
         \   'Title:    '.get(tags, 'title', ''),
         \   'Artist:   '.get(tags, 'artist', ''),
         \   'Album:    '.get(tags, 'album', ''),
         \   'Track No: '.get(tags, 'track', ''),
-        \   'Year:     '.get(tags, 'year', ''),
+        \ ]
+  if has_key(tags, 'year')
+    call extend(lines, [
+          \   'Year:     '.get(tags, 'year', ''),
+          \ ])
+  endif
+  if has_key(tags, 'date')
+    call extend(lines, [
+          \   'Date:     '.get(tags, 'date', ''),
+          \ ])
+  endif
+  call extend(lines, [
         \   'Genre:    '.get(tags, 'genre', ''),
         \   'Comment:  '.get(tags, 'comment', ''),
+        \   '',
+        \   repeat('=', strchars(version_line)),
+        \   version_line,
         \ ])
+
+  call append(0, lines)
   $delete _
   call cursor(1, 1)
 
