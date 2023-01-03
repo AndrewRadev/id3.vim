@@ -28,6 +28,7 @@ describe "mp3" do
         vim.normal 'CNew artist'
 
         vim.write
+        vim.edit 'fixtures/attempt_1.mp3'
 
         buffer_contents = get_buffer_contents
 
@@ -42,6 +43,7 @@ describe "mp3" do
           vim.search('^Date:\s\+\zs\S')
           vim.normal 'C2023-06'
           vim.write
+          vim.edit 'fixtures/attempt_1.mp3'
 
           buffer_contents = get_buffer_contents
           expect(buffer_contents).to match /^Date:\s+2023-06/

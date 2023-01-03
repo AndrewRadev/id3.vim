@@ -59,15 +59,27 @@ endfunction
 
 function! id3#id3_json#Update(command, filename) abort
   let new_filename = id3#utils#FindTagValue('File')
+  let tag_version = id3#utils#FindTagValue('Version')
+
+  if tag_version !~? '^ID3v2\.[234]$'
+    echoerr "Unexpected tag version: ".tag_version.". Expected ID3v2.{2,3,4}"
+    return
+  endif
+
   let tags = {}
 
   let tags.title   = id3#utils#FindTagValue('Title')
   let tags.artist  = id3#utils#FindTagValue('Artist')
   let tags.album   = id3#utils#FindTagValue('Album')
   let tags.track   = id3#utils#FindTagValue('Track No')
-  let tags.year    = id3#utils#FindTagValue('Year')
   let tags.genre   = id3#utils#FindTagValue('Genre')
   let tags.comment = id3#utils#FindTagValue('Comment')
+
+  if tag_version ==? 'ID3v2.4'
+    let tags.date = id3#utils#FindTagValue('Date')
+  else
+    let tags.year = id3#utils#FindTagValue('Year')
+  endif
 
   let tags = s:StringToNull(tags)
 
