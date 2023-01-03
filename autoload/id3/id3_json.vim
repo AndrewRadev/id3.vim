@@ -84,6 +84,8 @@ function! id3#id3_json#Update(command, filename) abort
   let tags = s:StringToNull(tags)
 
   let command_line = a:command . ' --write ' . shellescape(a:filename)
+  let command_line .= ' --tag-version '.shellescape(tag_version)
+
   let output = system(command_line, json_encode(tags))
   if v:shell_error
     echoerr "There was an error executing the `id3-json` command: ".output

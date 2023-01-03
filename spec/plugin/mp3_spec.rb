@@ -48,6 +48,29 @@ describe "mp3" do
           buffer_contents = get_buffer_contents
           expect(buffer_contents).to match /^Date:\s+2023-06/
         end
+
+        it "can change a file's tag version (between v2.3 and v.2.4)" do
+          vim.edit 'fixtures/attempt_1.mp3'
+
+          buffer_contents = get_buffer_contents
+          expect(buffer_contents).to match /^Version: ID3v2.4/
+
+          vim.search('^Version:\s\+\zs\S')
+          vim.normal 'CID3v2.3'
+          vim.write
+          vim.edit 'fixtures/attempt_1.mp3'
+
+          buffer_contents = get_buffer_contents
+          expect(buffer_contents).to match /^Version: ID3v2.3/
+
+          vim.search('^Version:\s\+\zs\S')
+          vim.normal 'CID3v2.4'
+          vim.write
+          vim.edit 'fixtures/attempt_1.mp3'
+
+          buffer_contents = get_buffer_contents
+          expect(buffer_contents).to match /^Version: ID3v2.4/
+        end
       end
     end
   end
