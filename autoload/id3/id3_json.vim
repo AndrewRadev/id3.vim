@@ -17,8 +17,13 @@ function! id3#id3_json#Read(command, filename) abort
     return
   endif
 
-  let tags = s:NullToString(json.data)
-  let tag_version = json.version
+  if !has_key(json, "data") || type(json['data']) != type({})
+    echoerr "Unexpected data received from `id3-json`: " . json
+    return
+  endif
+
+  let tags = s:NullToString(json['data'])
+  let tag_version = json['version']
 
   let file_line = 'File: '.a:filename
   let version_line = 'Version: '.tag_version
