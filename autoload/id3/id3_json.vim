@@ -30,7 +30,7 @@ function! id3#id3_json#Read(command, filename) abort
 
   let lines = [
         \   file_line,
-        \   repeat('=', strchars(file_line)),
+        \   repeat('=', strdisplaywidth(file_line)),
         \   '',
         \   'Title:    '.get(tags, 'title', ''),
         \   'Artist:   '.get(tags, 'artist', ''),
@@ -51,7 +51,7 @@ function! id3#id3_json#Read(command, filename) abort
         \   'Genre:    '.get(tags, 'genre', ''),
         \   'Comment:  '.get(tags, 'comment', ''),
         \   '',
-        \   repeat('=', strchars(version_line)),
+        \   repeat('=', strdisplaywidth(version_line)),
         \   version_line,
         \ ])
 
