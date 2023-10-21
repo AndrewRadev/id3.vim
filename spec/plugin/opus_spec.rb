@@ -1,6 +1,10 @@
 require 'spec_helper'
 
 describe "opus" do
+  before :each do
+    skip "Backend not installed: opustags" if !command_exists?('opustags')
+  end
+
   it "can read opus files' contents" do
     vim.edit 'fixtures/attempt_1.opus'
     buffer_contents = get_buffer_contents

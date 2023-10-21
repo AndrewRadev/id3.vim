@@ -1,6 +1,10 @@
 require 'spec_helper'
 
 describe "flac" do
+  before :each do
+    skip "Backend not installed: opustags" if !command_exists?('metaflac')
+  end
+
   it "can read flac files' contents" do
     vim.edit 'fixtures/attempt_1.flac'
     buffer_contents = get_buffer_contents
