@@ -27,6 +27,7 @@ function! id3#opus#Read(command, filename)
         \   'Title:       '.get(tags, 'title', ''),
         \   'Artist:      '.get(tags, 'artist', ''),
         \   'Album:       '.get(tags, 'album', ''),
+        \   'Track No:    '.get(tags, 'tracknumber', ''),
         \   'Date:        '.get(tags, 'date', ''),
         \   'Genre:       '.get(tags, 'genre', ''),
         \   'Description: '.get(tags, 'DESCRIPTION', ''),
@@ -44,6 +45,7 @@ function! id3#opus#Update(command, filename)
   let tags.title       = id3#utils#FindTagValue('Title')
   let tags.artist      = id3#utils#FindTagValue('Artist')
   let tags.album       = id3#utils#FindTagValue('Album')
+  let tags.tracknumber = id3#utils#FindTagValue('Track No')
   let tags.date        = id3#utils#FindTagValue('Date')
   let tags.genre       = id3#utils#FindTagValue('Genre')
   let tags.DESCRIPTION = id3#utils#FindTagValue('Description')
