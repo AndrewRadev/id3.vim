@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "flac" do
   before :each do
-    skip "Backend not installed: opustags" if !command_exists?('metaflac')
+    skip "Backend not installed: metaflac" if !command_exists?('metaflac')
   end
 
   it "can read flac files' contents" do
